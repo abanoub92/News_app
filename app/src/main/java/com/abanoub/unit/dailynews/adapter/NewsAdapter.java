@@ -45,7 +45,7 @@ public class NewsAdapter extends ArrayAdapter<DailyNews> {
 
         TextView date = rootView.findViewById(R.id.section_date);
         String stringDate = dailyNews.getmPublishedDate();
-        date.setText(formatDate(stringDate));
+        date.setText(stringDate);
 
         return rootView;
     }

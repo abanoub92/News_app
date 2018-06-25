@@ -5,24 +5,44 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_news"
+            android:icon="@drawable/news"
+            android:title="@string/section_global" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_science"
+            android:icon="@drawable/science"
+            android:title="@string/section_science" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_cities"
+            android:icon="@drawable/cities"
+            android:title="@string/section_cities" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_global_development"
+            android:icon="@drawable/globaldevelopment"
+            android:title="@string/section_global_development" />
+        <item
+            android:id="@+id/nav_world_cup"
+            android:icon="@drawable/worldcup"
+            android:title="@string/section_world_cup" />
+        <item
+            android:id="@+id/nav_football"
+            android:icon="@drawable/football"
+            android:title="@string/section_football" />
+        <item
+            android:id="@+id/nav_tech"
+            android:icon="@drawable/tech"
+            android:title="@string/section_tech" />
+        <item
+            android:id="@+id/nav_business"
+            android:icon="@drawable/business"
+            android:title="@string/section_business" />
+        <item
+            android:id="@+id/nav_environment"
+            android:icon="@drawable/environment"
+            android:title="@string/section_environment" />
     </group>
 
-    <item android:title="Communicate">
+    <!--<item android:title="Communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
@@ -34,5 +54,5 @@
                 android:title="Send" />
         </menu>
     </item>
-
+-->
 </menu>

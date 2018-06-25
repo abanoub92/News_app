@@ -1,5 +1,6 @@
 package com.abanoub.unit.dailynews.utils;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.abanoub.unit.dailynews.model.DailyNews;
@@ -15,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,12 +50,14 @@ public class NewsUtils {
         StringBuilder builder = new StringBuilder();
 
         try {
-            InputStreamReader streamReader = new InputStreamReader(stream);
-            BufferedReader bufferedReader = new BufferedReader(streamReader);
-            String line = bufferedReader.readLine();
-            while(line != null){
-                builder.append(line);
-                line = bufferedReader.readLine();
+            if (stream != null) {
+                InputStreamReader streamReader = new InputStreamReader(stream, Charset.forName("UTF-8"));
+                BufferedReader bufferedReader = new BufferedReader(streamReader);
+                String line = bufferedReader.readLine();
+                while (line != null) {
+                    builder.append(line);
+                    line = bufferedReader.readLine();
+                }
             }
         } catch (IOException e) {
             Log.e(LOG_TAG, "An error while converting the input stream", e);
@@ -70,14 +74,17 @@ public class NewsUtils {
      */
     private static String makeHttpRequest(URL url) throws IOException {
         String newsJson = "";
+        if (url == null){
+            return newsJson;
+        }
         HttpURLConnection httpURLConnection = null;
         InputStream inputStream = null;
 
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
 
             if (httpURLConnection.getResponseCode() == 200){
@@ -106,11 +113,16 @@ public class NewsUtils {
      */
     private static List<DailyNews> extractJsonFromString(String newsJson){
 
+        if (TextUtils.isEmpty(newsJson)){
+            return null;
+        }
+
         List<DailyNews> list = new ArrayList<>();
 
         try {
             JSONObject root = new JSONObject(newsJson);
-            JSONArray results = root.getJSONArray("results");
+            JSONObject response = root.getJSONObject("response");
+            JSONArray results = response.getJSONArray("results");
 
             for (int i = 0; i < results.length(); i++){
                 JSONObject object = results.getJSONObject(i);
@@ -138,7 +150,7 @@ public class NewsUtils {
      */
     public static List<DailyNews> fetchDataFromInternet(String stringUrl){
         URL url = createUrl(stringUrl);
-        String newsData = "";
+        String newsData = null;
         try {
             newsData = makeHttpRequest(url);
         } catch (IOException e) {

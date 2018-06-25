@@ -2,8 +2,17 @@
     <string name="app_name">Daily News</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_subtitle">https://github.com/abanoub92</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <string name="section_global">News</string>
+    <string name="section_science">Science</string>
+    <string name="section_cities">Cities</string>
+    <string name="section_global_development">Global Development</string>
+    <string name="section_world_cup">World Cup 2018</string>
+    <string name="section_football">Football</string>
+    <string name="section_tech">Tech</string>
+    <string name="section_business">Business</string>
+    <string name="section_environment">Environment</string>
 </resources>
