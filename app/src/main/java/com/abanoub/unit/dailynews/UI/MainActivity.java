@@ -1,12 +1,13 @@
 package com.abanoub.unit.dailynews.UI;
 
+import android.app.ActionBar;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -30,6 +32,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<List<DailyNews>> {
+
+    private Uri.Builder builder;
 
     private String query;
 
@@ -134,6 +138,10 @@ public class MainActivity extends AppCompatActivity
             query = getString(R.string.section_environment);
         }
 
+
+        LoaderManager loaderManager = getLoaderManager();
+        loaderManager.restartLoader(1, null,  this);
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -143,7 +151,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<DailyNews>> onCreateLoader(int i, Bundle bundle) {
         Uri uri = Uri.parse(NEWS_FEED_URL);
-        Uri.Builder builder = uri.buildUpon();
+        builder = uri.buildUpon();
 
         builder.appendQueryParameter("q", query);
         builder.appendQueryParameter("api-key", "2339781e-91cc-4bc2-b4cf-6bdac3c2e5f0");

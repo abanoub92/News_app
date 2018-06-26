@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.abanoub.unit.dailynews.R;
 import com.abanoub.unit.dailynews.model.DailyNews;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -45,16 +46,22 @@ public class NewsAdapter extends ArrayAdapter<DailyNews> {
 
         TextView date = rootView.findViewById(R.id.section_date);
         String stringDate = dailyNews.getmPublishedDate();
-        date.setText(stringDate);
+        date.setText(formatDate(stringDate));
 
         return rootView;
     }
 
 
     private String formatDate (String stringDate){
-        long longDate = Long.getLong(stringDate);
-        Date date = new Date(longDate);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());
-        return format.format(date);
+        SimpleDateFormat sdf;
+        Date date = null;
+        sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+        try {
+            date = sdf.parse(stringDate);
+            sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return sdf.format(date);
     }
 }
