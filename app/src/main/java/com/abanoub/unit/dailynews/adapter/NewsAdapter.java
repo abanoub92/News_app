@@ -25,33 +25,45 @@ public class NewsAdapter extends ArrayAdapter<DailyNews> {
         super(context, R.layout.list_item, objects);
     }
 
-
+    /** preparing custom layout as row in listView */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
+        /** connecting the custom adapter with custom list item */
         View rootView = convertView;
-
         if (rootView == null){
             rootView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
         }
 
+        /** get all items of an array (one by one) by using @{@link DailyNews} model class */
         DailyNews dailyNews = getItem(position);
 
+        /** get connection with xml TextView
+         * and setting the news section name to it */
         TextView section_name = rootView.findViewById(R.id.section_name);
         section_name.setText(dailyNews.getmSectionName());
 
+        /** get connection with xml TextView
+         * and setting the title of news */
         TextView title = rootView.findViewById(R.id.section_title);
         title.setText(dailyNews.getmTitle());
 
+        /** get connection with xml TextView
+         * and setting the published date of news */
         TextView date = rootView.findViewById(R.id.section_date);
         String stringDate = dailyNews.getmPublishedDate();
         date.setText(formatDate(stringDate));
 
+        /** return custom adapter for list_item */
         return rootView;
     }
 
-
+    /**
+     * Convert the format of coming string date to custom format
+     * @param stringDate coming date
+     * @return custom string date format
+     */
     private String formatDate (String stringDate){
         SimpleDateFormat sdf;
         Date date = null;

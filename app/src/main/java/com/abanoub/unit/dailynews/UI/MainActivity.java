@@ -1,11 +1,11 @@
 package com.abanoub.unit.dailynews.UI;
 
-import android.app.ActionBar;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -17,10 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.abanoub.unit.dailynews.R;
 import com.abanoub.unit.dailynews.adapter.NewsAdapter;
@@ -33,84 +33,90 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<List<DailyNews>> {
 
-    private Uri.Builder builder;
+    TextView empty_text;
 
+    boolean isConnect;
+
+    ProgressBar progressBar;
+
+    /**
+     * global container the query of selection news type
+     */
     private String query;
 
-    private ProgressBar progressBar;
-
+    /**
+     * global adapter container for list view
+     */
     private NewsAdapter adapter;
 
-    private static final String NEWS_FEED_URL =
-            "http://content.guardianapis.com/search";
-    //?q=debate&tag=politics/politics&api-key=2339781e-91cc-4bc2-b4cf-6bdac3c2e5f0
+    /**
+     * global url to get data of news
+     */
+    private static final String NEWS_FEED_URL = "http://content.guardianapis.com/search";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /** connect the xml toolbar and add to design */
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        /** connect the xml drawer layout
+         * it's the activity_main master view group */
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        /** responsible of getting the section type by
+         * clicking on one of many section in navigation list */
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        empty_text = findViewById(R.id.empty_text);
+        progressBar = findViewById(R.id.progress_bar);
+
+        /** check the network state if there's an internet connection */
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        isConnect = info != null && info.isConnectedOrConnecting();
+
+        /** connect listView variable with xml ListView */
         ListView listView = findViewById(R.id.news_list);
+        listView.setEmptyView(empty_text);
+
+        /** create an object from custom adapter */
         adapter = new NewsAdapter(this, new ArrayList<DailyNews>());
+
+        /** add the adapter to list view */
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                /** getting position of list row which clicked */
                 DailyNews dailyNews = adapter.getItem(i);
 
+                /** convert news feed url to uri for use it in search */
                 Uri uri = Uri.parse(dailyNews.getmNewsUrl());
 
+                /** open the browser and searching for this uri */
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
         });
 
+
+        /** responsible of initialize the loader and fetch the data*/
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(1, null, this);
+
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -118,6 +124,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        /** getting the clicked section to looking of equal with news type */
         if (id == R.id.nav_news) {
             query = getString(R.string.section_global);
         } else if (id == R.id.nav_science) {
@@ -139,8 +146,11 @@ public class MainActivity extends AppCompatActivity
         }
 
 
+        /** after getting the right section make reload to connection
+         * to get the right news equals with selected section */
         LoaderManager loaderManager = getLoaderManager();
-        loaderManager.restartLoader(1, null,  this);
+        loaderManager.restartLoader(1, null, this);
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -150,26 +160,43 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Loader<List<DailyNews>> onCreateLoader(int i, Bundle bundle) {
+        /** convert the string url to uri can edit on it
+         * uri allows us to add and modify the using url */
         Uri uri = Uri.parse(NEWS_FEED_URL);
-        builder = uri.buildUpon();
+        Uri.Builder builder = uri.buildUpon();
 
         builder.appendQueryParameter("q", query);
-        builder.appendQueryParameter("api-key", "2339781e-91cc-4bc2-b4cf-6bdac3c2e5f0");
+        builder.appendQueryParameter("order-by", "newest");
+        builder.appendQueryParameter("api-key", "");
         return new NewsLoader(this, builder.toString());
     }
 
     @Override
     public void onLoadFinished(Loader<List<DailyNews>> loader, List<DailyNews> dailyNews) {
-        progressBar = findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.GONE);
+        if (isConnect) {
+            /** connect with xml progress bar it's run while the data fetching
+             * and hide when data is download */
+            progressBar.setVisibility(View.GONE);
+            empty_text.setText(getString(R.string.empty_list));
 
-        adapter.clear();
+            /** clear the adapter for new data */
+            adapter.clear();
 
-        if (dailyNews != null && !dailyNews.isEmpty()){
-            adapter.addAll(dailyNews);
+            /** check the list is empty
+             * if not empty add the data to adapter */
+            if (dailyNews != null && !dailyNews.isEmpty()) {
+                adapter.addAll(dailyNews);
+            }
+        }else {
+            /** in case of no internet connection */
+            progressBar.setVisibility(View.GONE);
+            empty_text.setText(getString(R.string.no_connection));
         }
     }
 
+    /**
+     * when the loader resets clear the adapter
+     */
     @Override
     public void onLoaderReset(Loader<List<DailyNews>> loader) {
         adapter.clear();

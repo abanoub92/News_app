@@ -6,6 +6,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <!-- labels of navigation menu -->
     <string name="section_global">News</string>
     <string name="section_science">Science</string>
     <string name="section_cities">Cities</string>
@@ -15,4 +16,7 @@
     <string name="section_tech">Tech</string>
     <string name="section_business">Business</string>
     <string name="section_environment">Environment</string>
+
+    <string name="empty_list">No news are available</string>
+    <string name="no_connection">No connection established</string>
 </resources>

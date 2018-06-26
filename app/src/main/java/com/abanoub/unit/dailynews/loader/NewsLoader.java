@@ -10,9 +10,10 @@ import java.util.List;
 
 public class NewsLoader extends AsyncTaskLoader<List<DailyNews>> {
 
-    //String variable to save the connect url
+    /**String variable to save the connect url */
     private String url;
 
+    /** all data should use it inside this class */
     public NewsLoader(Context context, String url) {
         super(context);
         this.url = url;
